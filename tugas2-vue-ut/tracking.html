@@ -1,0 +1,184 @@
+<!--Identitas Mahasiswa
+Nama	: Agus Sutikno
+NIM	: 052784116
+Prodi	: Sistem Informasi
+UPBJJ	: UT UPBJJ Jayapura
+Tugas	: Tugas Praktikum Mata Kuliah Pemrograman Berbasis Web
+-->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracking DO - Inventory Pro</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Vue.js v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <meta name="description" content="Halaman Tracking Delivery Order">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/Logo_Universitas_Terbuka.svg" alt="Logo UT" style="width: 32px; height: auto;">
+      <span style="font-size: 1.1rem;">Universitas Terbuka</span>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><i class="ph ph-squares-four"></i> Dashboard</a></li>
+      <li><a href="stok.html"><i class="ph ph-warehouse"></i> Manajemen Stok</a></li>
+      <li><a href="tracking.html" class="active"><i class="ph ph-map-pin-line"></i> Tracking DO</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <img src="assets/user.jpeg" alt="User Avatar" class="avatar" style="object-fit: cover;">
+      <div>
+        <div style="font-weight: 600; font-size: 0.9rem;">Admin UT</div>
+        <div style="font-size: 0.75rem; opacity: 0.7;">Administrator</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area with Vue id="app" -->
+  <main class="main-content" id="app">
+    <header class="topbar">
+      <div class="topbar-title">Tracking Pengiriman DO</div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" @click="openAddModal">
+          <i class="ph ph-plus"></i> Pengiriman Baru (DO)
+        </button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Daftar Pengiriman Aktif</h1>
+          <p class="page-subtitle">Pantau status pengiriman logistik bahan ajar secara real-time.</p>
+        </div>
+      </div>
+
+      <!-- List Tracking DO -->
+      <div style="display: flex; gap: 24px; align-items: flex-start;">
+        
+        <!-- Left Column: DO List -->
+        <div style="flex: 2; display: flex; flex-direction: column; gap: 16px;">
+          <div v-for="doItem in trackingData" :key="doItem.nomorDO" class="table-card" style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
+              <div>
+                <h3 style="font-size: 1.15rem; margin-bottom: 4px;">
+                  <i class="ph ph-truck" style="margin-right: 8px;"></i>{{ doItem.nomorDO }}
+                </h3>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">
+                  Penerima: {{ doItem.nama }} ({{ doItem.nim }}) | Tgl Kirim: {{ doItem.tanggalKirim }}
+                </div>
+              </div>
+              <span class="badge badge-menipis">{{ doItem.status }}</span>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 16px;">
+              <div><strong>Paket:</strong> {{ doItem.paket }}</div>
+              <div><strong>Ekspedisi:</strong> {{ doItem.ekspedisi }}</div>
+              <div style="color: var(--primary-color); font-weight: 700;">{{ formatRupiah(doItem.total) }}</div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="timeline">
+              <div class="timeline-item" v-for="(log, idx) in doItem.timeline" :key="idx">
+                <div class="timeline-time">{{ log.waktu }}</div>
+                <div class="timeline-desc">{{ log.keterangan }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div v-if="trackingData.length === 0" style="padding: 32px; text-align: center; color: var(--text-muted); border: 1px dashed var(--border-color); border-radius: 8px;">
+            Belum ada data pengiriman aktif.
+          </div>
+        </div>
+
+        <!-- Right Column: Status Summary (optional aesthetic) -->
+        <div class="table-card" style="flex: 1; padding: 24px; position: sticky; top: 0;">
+          <h3 style="margin-bottom: 16px; font-size: 1.15rem;">Ringkasan Sistem</h3>
+          <div style="padding: 16px; background: var(--bg-main); border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between;">
+            <span style="font-weight: 600;">Total Pengiriman</span>
+            <span style="font-weight: 700; color: var(--primary-color);">{{ trackingData.length }}</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+            Pastikan update nomor resi dan tracking ekspedisi secara berkala untuk menjaga transparansi dengan penerima (mahasiswa).
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Modal Tambah DO -->
+    <div class="modal-overlay" v-if="showAddModal">
+      <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+          <h3>Form Pemesanan Delivery Order Baru</h3>
+          <button class="close-btn" @click="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div style="background: var(--bg-main); padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; text-align: center; font-size: 1.1rem; color: var(--primary-color);">
+            No. DO: {{ generatedDO }}
+          </div>
+
+          <div style="display: flex; gap: 16px;">
+            <div class="form-group" style="flex: 1;">
+              <label>NIM Mahasiswa</label>
+              <input type="text" class="form-control" v-model="form.nim">
+            </div>
+            <div class="form-group" style="flex: 2;">
+              <label>Nama Mahasiswa</label>
+              <input type="text" class="form-control" v-model="form.nama">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 16px; margin-top: 16px;">
+            <div class="form-group" style="flex: 1;">
+              <label>Ekspedisi Pengiriman</label>
+              <select class="form-control" v-model="form.ekspedisi">
+                <option value="" disabled>-- Pilih Ekspedisi --</option>
+                <option v-for="eks in pengirimanList" :value="eks.kode" :key="eks.kode">
+                  {{ eks.kode }} - {{ eks.nama }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Tanggal Kirim</label>
+              <input type="date" class="form-control" v-model="form.tanggalKirim">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 16px;">
+            <label>Paket Bahan Ajar</label>
+            <select class="form-control" v-model="form.paket">
+              <option value="" disabled>-- Pilih Paket --</option>
+              <option v-for="pkt in paket" :value="pkt.kode" :key="pkt.kode">
+                {{ pkt.kode }} - {{ pkt.nama }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Menampilkan Detail Paket (Directive v-html dipicu watcher form.paket) -->
+          <div v-show="form.paket" style="margin-top: 12px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem;">
+            <div v-html="detailPaketHTML"></div>
+            <div style="margin-top: 8px; font-weight: 700; color: var(--primary-color); border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+              Total Harga: {{ formatRupiah(selectedTotalHarga) }}
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" @click="closeModal">Batal</button>
+          <button class="btn btn-primary" @click="saveDO">Simpan & Proses DO</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/tracking-app.js"></script>
+</body>
+</html>

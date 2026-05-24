@@ -1,0 +1,134 @@
+<!--Identitas Mahasiswa
+Nama	: Agus Sutikno
+NIM	: 052784116
+Prodi	: Sistem Informasi
+UPBJJ	: UT UPBJJ Jayapura
+Tugas	: Tugas Praktikum Mata Kuliah Pemrograman Berbasis Web
+-->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Inventory Pro UT</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Phosphor Icons CDN -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Vue.js v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <!-- SEO Best Practices -->
+  <meta name="description" content="Sistem Informasi Pemesanan dan Manajemen Bahan Ajar Universitas Terbuka">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/Logo_Universitas_Terbuka.svg" alt="Logo UT" style="width: 32px; height: auto;">
+      <span style="font-size: 1.1rem;">Universitas Terbuka</span>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html" class="active"><i class="ph ph-squares-four"></i> Dashboard</a></li>
+      <li><a href="stok.html"><i class="ph ph-warehouse"></i> Manajemen Stok</a></li>
+      <li><a href="tracking.html"><i class="ph ph-map-pin-line"></i> Tracking DO</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <img src="assets/user.jpeg" alt="User Avatar" class="avatar" style="object-fit: cover;">
+      <div>
+        <div style="font-weight: 600; font-size: 0.9rem;">Admin UT</div>
+        <div style="font-size: 0.75rem; opacity: 0.7;">Administrator</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" id="app">
+    <header class="topbar">
+      <div class="topbar-title">Dashboard Utama</div>
+      <div class="topbar-actions">
+        <div class="search-box">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" placeholder="Cari data...">
+        </div>
+        <i class="ph ph-bell" style="font-size: 1.25rem; cursor: pointer;"></i>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <h1 class="page-title">{{ sapaan }}, Admin</h1>
+          <p class="page-subtitle">Pusat manajemen dan distribusi bahan ajar Universitas Terbuka.</p>
+        </div>
+        <div style="font-size: 0.85rem; font-weight: 600; color: #5a6a7c;">
+          <table style="border-collapse: collapse;">
+            <tr><td style="padding-right: 12px; padding-bottom: 4px;">Hari</td><td style="padding-bottom: 4px;">: {{ hari }}</td></tr>
+            <tr><td style="padding-right: 12px; padding-bottom: 4px;">Tanggal</td><td style="padding-bottom: 4px;">: {{ tanggal }}</td></tr>
+            <tr><td style="padding-right: 12px;">Jam</td><td>: {{ jam }} WIT</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="stats-container">
+        <div class="stat-card" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="window.location.href='stok.html'">
+          <div>
+            <div class="stat-title">Menu Utama</div>
+            <div class="stat-value"><i class="ph ph-warehouse"></i> Stok</div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Kelola ketersediaan bahan ajar</p>
+          </div>
+          <div style="text-align: center; margin-right: 20px;">
+            <div style="font-size: 3.5rem; font-weight: 700; color: var(--primary-color); line-height: 1;">{{ totalStok }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; font-weight: 600;">Jumlah Seluruh Buku</div>
+          </div>
+        </div>
+        
+        <div class="stat-card" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="window.location.href='tracking.html'">
+          <div>
+            <div class="stat-title">Menu Utama</div>
+            <div class="stat-value"><i class="ph ph-truck"></i> Tracking</div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Lacak status pengiriman DO</p>
+          </div>
+          <div style="text-align: center; margin-right: 20px;">
+            <div style="font-size: 3.5rem; font-weight: 700; color: var(--primary-color); line-height: 1;">{{ totalPengiriman }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; font-weight: 600;">Status Tracking</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profil Mahasiswa -->
+      <div style="margin-top: 32px; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 32px; display: flex; gap: 40px; align-items: flex-start;">
+        <img src="assets/user.jpeg" alt="Foto Mahasiswa" style="width: 160px; height: 160px; object-fit: cover;">
+        <div style="flex-grow: 1; font-size: 0.95rem; color: #000;">
+          <p style="margin-bottom: 8px; font-weight: 600; color: var(--text-muted);">Identitas Mahasiswa:</p>
+          <table style="width: 100%; max-width: 600px; border-collapse: collapse; border: 1px solid #ccc; line-height: 1;">
+            <tr>
+              <td style="font-weight: 600; padding: 6px 16px; width: 80px;">Nama</td>
+              <td style="padding: 6px 16px;">: Agus Sutikno</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600; padding: 6px 16px;">NIM</td>
+              <td style="padding: 6px 16px;">: 052784116</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600; padding: 6px 16px;">Prodi</td>
+              <td style="padding: 6px 16px;">: Sistem Informasi</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600; padding: 6px 16px;">UPBJJ</td>
+              <td style="padding: 6px 16px;">: UT UPBJJ Jayapura</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600; padding: 6px 16px;">Tugas</td>
+              <td style="padding: 6px 16px;">: Tugas Praktikum Mata Kuliah Pemrograman Berbasis Web</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/index-app.js"></script>
+</body>
+</html>
